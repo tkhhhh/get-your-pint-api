@@ -28,3 +28,8 @@ go run cmd/main.go
 ## Endpoints
 
 - `GET /health`: Returns a simple message indicating that the server is running.
+
+## Build
+
+- GOOS=linux GOARCH=amd64 go build -o main ./cmd/main.go
+- docker run -p 8080:8080 go-api-server
