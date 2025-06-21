@@ -28,7 +28,3 @@ go run cmd/main.go
 ## Endpoints
 
 - `GET /health`: Returns a simple message indicating that the server is running.
-
-## License
-
-This project is licensed under the MIT License.
