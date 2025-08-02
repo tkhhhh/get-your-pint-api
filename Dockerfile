@@ -1,11 +1,17 @@
 # Use a minimal base image
-FROM alpine:latest
+FROM golang:1.24
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the pre-built binary into the container
-COPY main .
+# Copy the Go application into the container
+COPY . .
+
+# Download dependencies
+RUN go mod download
+
+# Build the Go application
+RUN go build -o main ./cmd/main.go 
 
 # Expose the port the application runs on
 EXPOSE 8080
