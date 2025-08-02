@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  init:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -29,3 +29,21 @@ jobs:
         run: go build -v ./...
       - name: run tests
         run: go test -v ./... -coverprofile=coverage.out
+      - name: upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ matrix.go-version }}
+          path: coverage.out
+          retention-days: 5
+
+  display_result:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download coverage report
+        uses: actions/download-artifact@v2
+        with:
+          name: coverage-report-${{ matrix.go-version }}
+      - name: Display coverage report
+        run: |
+          value=$(cat coverage.out)
+          echo "$value"
