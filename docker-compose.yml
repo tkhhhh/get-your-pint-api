@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-blogs}
+      POSTGRES_USER: ${POSTGRES_USER:-blogs}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-blogs}
+    ports:
+      - "${DB_HOST_PORT:-5433}:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-blogs} -d ${POSTGRES_DB:-blogs}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+    restart: unless-stopped
+    environment:
+      PORT: "8080"
+      DATABASE_URL: postgres://${POSTGRES_USER:-blogs}:${POSTGRES_PASSWORD:-blogs}@db:5432/${POSTGRES_DB:-blogs}?sslmode=disable
+    ports:
+      - "${API_HOST_PORT:-8090}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
